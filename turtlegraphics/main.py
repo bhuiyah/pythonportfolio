@@ -34,13 +34,24 @@ def random_walk(turtle):
         turtle.forward(15)
         turtle.setheading(random.choice(directions))
              
-
+def spirograph(turtle, size):
+    turtle.speed(0)
+    for i in range(int(360/size)):
+        turtle.color((random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)))
+        turtle.circle(100)
+        turtle.right(size)
+    
+    
+    
+    
 timmy = turtle.Turtle()
 
 #draw_square(timmy)
 #draw_dashed(timmy)
 #draw_shapes(timmy)
-random_walk(timmy)
+#random_walk(timmy)
+
+spirograph(timmy, 10)
 
 
 myScreen = turtle.Screen()
