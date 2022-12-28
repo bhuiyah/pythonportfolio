@@ -52,6 +52,7 @@ class Snake:
             if self.head.distance(body) < 8:
                 return True
         return False
+    
             
                 
             
