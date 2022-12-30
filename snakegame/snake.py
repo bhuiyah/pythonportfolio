@@ -53,6 +53,13 @@ class Snake:
                 return True
         return False
     
+    def reset(self):
+        for snake in self.snakes:
+            snake.goto((1000, 1000))
+        del self.snakes[3:]
+        for i in range(3):
+            self.snakes[i].goto((i*-20, 0))
+    
             
                 
             
