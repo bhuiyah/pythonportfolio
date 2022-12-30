@@ -6,10 +6,12 @@ FONT = ("Courier", 25, "normal")
 
 class Score(Turtle):
     
+        
     def __init__(self):
         super().__init__()
+        with open("data.txt") as file:
+            self.highscore = int(file.read())
         self.score = 0
-        self.highscore = 0
         self.penup()
         self.hideturtle()
         self.color("white")
@@ -38,3 +40,5 @@ class Score(Turtle):
     def updatehighscore(self):
         if self.score > self.highscore:
             self.highscore = self.score
+            with open("data.txt", "w") as file:
+                file.write(str(self.highscore))
