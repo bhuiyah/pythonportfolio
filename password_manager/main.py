@@ -2,6 +2,24 @@ from tkinter import*
 from tkinter import messagebox
 from random import choice, randint, shuffle
 import pyperclip
+import json
+FILE = "data.json"
+
+def find_password():
+    try:
+        with open(FILE, "r") as file:
+            data = json.load(file)
+    except FileNotFoundError:
+        messagebox.showinfo(title="Error", message=f"No Data File Found")
+    else:
+        try:
+            user = data[website_entry.get()]["email/user"]
+            passw = data[website_entry.get()]["password"]
+            pyperclip.copy(passw)
+            messagebox.showinfo(title=f"{website_entry.get()}", message=f"Email/UserName: {user}\nPassword: {passw}")
+        except KeyError:
+            messagebox.showinfo(title="Error", message=f"No details for the website exists, please retry.")
+            
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 def generate_password():
     letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
@@ -25,13 +43,31 @@ def save():
     web = website_entry.get()
     user = user_entry.get()
     password = pass_entry.get()
+    new_data = {
+        web: {
+            "email/user": user,
+            "password": password,
+        }
+    }
     if len(web) == 0 or len(password) == 0:
         messagebox.showinfo(title="Oops", message="Please don't leave any fields empty!")
     else:
-        is_ok = messagebox.askokcancel(title=web, message=f"These are the details entered:\n Email/User: {user}\n Password: {password}\n Is it okay to save?")
-        if is_ok:
-            with open("passwords.txt", "a") as file:
-                file.write(f"{web} | {user} | {password}\n")
+        try:
+            with open(FILE, "r") as file:
+                #Reading old data
+                data = json.load(file)
+                    
+        except FileNotFoundError:
+            with open(FILE, "w") as file:
+                json.dump(new_data, file, indent=4)
+
+        else: 
+            #Updating old data with new data
+            data.update(new_data)
+            with open(FILE, "w") as file:
+                json.dump(data, file,  indent=4)
+        
+        finally:
             website_entry.delete(0, END)
             pass_entry.delete(0, END)
             messagebox.showinfo(title="Success", message=f"Saved the password for {web}")
@@ -57,8 +93,11 @@ pass_label = Label(text="Password:")
 pass_label.grid(column=0, row=3)
 
 website_entry = Entry(width=35)
-website_entry.grid(column=1, row=1, columnspan=2, sticky="EW")
+website_entry.grid(column=1, row=1, sticky="EW")
 website_entry.focus()
+
+search = Button(text="Search", command=find_password)
+search.grid(column=2, row=1, sticky="EW")
 
 user_entry = Entry(width=35)
 user_entry.grid(column=1, row=2, columnspan=2, sticky="EW")
